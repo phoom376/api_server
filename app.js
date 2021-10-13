@@ -2,6 +2,7 @@ require("dotenv").config();
 require("./config/database").connect();
 
 const User = require("./model/user");
+const Products = require("./model/products");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("./middleware/auth");
@@ -86,6 +87,28 @@ app.post("/login", async (req, res) => {
 
 app.post("/auth", auth, (req, res) => {
   res.status(200).send({ meesage: "Success", isAuth: true });
+});
+
+app.post("/addproduct", async (req, res) => {
+  const { p_name, p_price, p_qty, p_image } = req.body;
+  if (p_name && p_price && p_qty && p_image) {
+    const products = await Products.create({
+      p_name,
+      p_price,
+      p_qty,
+      p_image,
+    });
+    res.send({ message: "Success" });
+    res.status(201).json(products);
+  } else {
+    res.send({ message: "All input requried" });
+  }
+});
+
+app.get("/getproduct", async (req, res) => {
+  const product = await Products.find();
+
+  res.send(product);
 });
 
 module.exports = app;
