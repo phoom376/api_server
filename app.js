@@ -98,8 +98,7 @@ app.post("/addproduct", async (req, res) => {
       p_qty,
       p_image,
     });
-    res.send({ message: "Success" });
-    res.status(201).json(products);
+    res.status(200).json(products);
   } else {
     res.send({ message: "All input requried" });
   }
@@ -107,8 +106,15 @@ app.post("/addproduct", async (req, res) => {
 
 app.get("/getproduct", async (req, res) => {
   const product = await Products.find();
-
   res.send(product);
+});
+
+app.delete("/delete/:id", async (req, res) => {
+  const  id  =  req.params.id;
+  console.log(id)
+  const products = await Products.findByIdAndDelete({ _id: id });
+
+  res.status(200).send({message:"deleted"});
 });
 
 module.exports = app;
