@@ -117,9 +117,9 @@ app.post("/createCompany", async (req, res) => {
       });
 
       res.status(200).json(company);
+    } else {
+      res.send({ message: "ALL INPUT IS REQUIRED" });
     }
-
-    res.send({ message: "ALL INPUT IS REQUIRED" });
   } catch (err) {
     consol.log(err);
   }
