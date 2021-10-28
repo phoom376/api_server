@@ -104,7 +104,7 @@ app.post("/createCompany", async (req, res) => {
 
   try {
     if (!(c_name && c_description && c_address)) {
-      const oldCom = Company.findOne({ c_name });
+      const oldCom = await Company.findOne({ c_name });
 
       if (oldCom) {
         res.send({ message: "Company already exist. Please login" });
