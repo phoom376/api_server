@@ -3,6 +3,7 @@ require("./config/database").connect();
 
 const User = require("./model/user");
 const Products = require("./model/products");
+const Company = require("./model/company");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const auth = require("./middleware/auth");
@@ -23,7 +24,7 @@ app.use(cors());
 
 app.post("/register", async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    const { first_name, last_name, email, password, c_id } = req.body;
     if (!(first_name && last_name && email && password)) {
       res.status(400).send({ message: "All input requried" });
     }
@@ -40,6 +41,7 @@ app.post("/register", async (req, res) => {
       first_name,
       last_name,
       email: email.toLowerCase(),
+      c_id,
       password: encryptPassword,
     });
 
@@ -97,6 +99,32 @@ app.post("/auth", auth, (req, res) => {
   res.status(200).send({ meesage: "Success", isAuth: true });
 });
 
+app.post("createCompany", async (req, res) => {
+  const { c_name, c_description, c_address } = req.body;
+
+  try {
+    if (!(c_name && c_description && c_address)) {
+      const oldCom = Company.findOne({ c_name });
+
+      if (oldCom) {
+        res.send({ message: "Company already exist. Please login" });
+      }
+
+      const company = await Company.create({
+        c_name,
+        c_description,
+        c_address,
+      });
+
+      res.status(200).json(company);
+    }
+
+    res.send({ message: "ALL INPUT IS REQUIRED" });
+  } catch (err) {
+    consol.log(err);
+  }
+});
+
 app.post("/addproduct", async (req, res) => {
   const { p_name, p_price, p_qty, p_image } = req.body;
   if (p_name && p_price && p_qty && p_image) {
@@ -118,11 +146,11 @@ app.get("/getproduct", async (req, res) => {
 });
 
 app.delete("/delete/:id", async (req, res) => {
-  const  id  =  req.params.id;
-  console.log(id)
+  const id = req.params.id;
+  console.log(id);
   const products = await Products.findByIdAndDelete({ _id: id });
 
-  res.status(200).send({message:"deleted"});
+  res.status(200).send({ message: "deleted" });
 });
 
 module.exports = app;
