@@ -109,7 +109,6 @@ app.post("/createCompany", async (req, res) => {
       if (oldCom) {
         res.send({ message: "Company already exist. Please login" });
       }
-
       const company = await Company.create({
         c_name,
         c_description,
