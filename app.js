@@ -77,6 +77,7 @@ app.post("/login", async (req, res) => {
           user_id: user._id,
           username: user.first_name + " " + user.last_name,
           email,
+          c_id: user.c_id,
         },
         process.env.TOKEN_KEY,
         {
