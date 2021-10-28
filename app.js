@@ -104,6 +104,8 @@ app.post("/createCompany", async (req, res) => {
 
   try {
     if (!(c_name && c_description && c_address)) {
+      res.send({ message: "ALL INPUT IS REQUIRED" });
+    } else {
       const oldCom = await Company.findOne({ c_name });
 
       if (oldCom) {
@@ -116,8 +118,6 @@ app.post("/createCompany", async (req, res) => {
       });
 
       res.status(200).json(company);
-    } else {
-      res.send({ message: "ALL INPUT IS REQUIRED" });
     }
   } catch (err) {
     consol.log(err);
