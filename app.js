@@ -99,7 +99,7 @@ app.post("/auth", auth, (req, res) => {
   res.status(200).send({ meesage: "Success", isAuth: true });
 });
 
-app.post("createCompany", async (req, res) => {
+app.post("/createCompany", async (req, res) => {
   const { c_name, c_description, c_address } = req.body;
 
   try {
