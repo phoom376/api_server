@@ -124,6 +124,12 @@ app.post("/createCompany", async (req, res) => {
   }
 });
 
+app.get("/company", async (req, res) => {
+  const company = await Company.find();
+
+  res.send(company);
+});
+
 app.post("/addproduct", async (req, res) => {
   const { p_name, p_price, p_qty, p_image } = req.body;
   if (p_name && p_price && p_qty && p_image) {
