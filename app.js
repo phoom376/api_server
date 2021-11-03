@@ -134,7 +134,13 @@ app.get("/company", async (req, res) => {
 app.post("/updateCompanyBoard", async (req, res) => {
   const { c_id, b_id } = req.body;
 
-  if (b_id) {
+  const oldBoard = await Company.find({ _id: c_id, c_board: { b_id: b_id } });
+
+  if (oldBoard) {
+    res.send({ message: "board has already" });
+  }
+
+  if ((b_id, c_id) && !oldBoard) {
     await Company.updateOne(
       { _id: c_id },
       { $push: { c_board: { b_id: b_id } } },
@@ -144,8 +150,7 @@ app.post("/updateCompanyBoard", async (req, res) => {
       }
     );
 
-    res.send({message:"updated"})
-
+    res.send({ message: "updated" });
   }
 });
 
