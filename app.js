@@ -131,7 +131,7 @@ app.get("/company", async (req, res) => {
   res.send(company);
 });
 
-app.post("updateCompanyBoard", async (req, res) => {
+app.post("/updateCompanyBoard", async (req, res) => {
   const { c_id, b_id } = req.body;
 
   if (b_id) {
