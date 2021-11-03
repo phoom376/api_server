@@ -131,6 +131,24 @@ app.get("/company", async (req, res) => {
   res.send(company);
 });
 
+app.post("updateCompanyBoard", async (req, res) => {
+  const { c_id, b_id } = req.body;
+
+  if (b_id) {
+    await Company.updateOne(
+      { _id: c_id },
+      { $push: { c_board: { b_id: b_id } } },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
+
+    res.send({message:"updated"})
+
+  }
+});
+
 app.post("/addproduct", async (req, res) => {
   const { p_name, p_price, p_qty, p_image } = req.body;
   if (p_name && p_price && p_qty && p_image) {
