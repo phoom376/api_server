@@ -107,7 +107,7 @@ app.post("/createCompany", async (req, res) => {
     if (!(c_name && c_description && c_address)) {
       res.send({ message: "ALL INPUT IS REQUIRED" });
     } else {
-      const oldCom = await Company.findOne({ c_name: c_name.toLowerCase() });
+      const oldCom = await Company.findOne({ c_name: c_name });
 
       if (oldCom) {
         res.send({
@@ -116,7 +116,7 @@ app.post("/createCompany", async (req, res) => {
         });
       }
       const company = await Company.create({
-        c_name: c_name.toLowerCase(),
+        c_name: c_name,
         c_description,
         c_address,
       });
