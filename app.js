@@ -107,13 +107,16 @@ app.post("/createCompany", async (req, res) => {
     if (!(c_name && c_description && c_address)) {
       res.send({ message: "ALL INPUT IS REQUIRED" });
     } else {
-      const oldCom = await Company.findOne({ c_name });
+      const oldCom = await Company.findOne({ c_name: c_name.toLowerCase() });
 
       if (oldCom) {
-        res.send({ message: "Company already exist. Please login" });
+        res.send({
+          message: "Company already exist. Please login",
+          c_id: oldCom.c_id,
+        });
       }
       const company = await Company.create({
-        c_name,
+        c_name: c_name.toLowerCase(),
         c_description,
         c_address,
       });
@@ -125,32 +128,66 @@ app.post("/createCompany", async (req, res) => {
   }
 });
 
-app.get("/company", async (req, res) => {
+app.get("/company", async (req, res, next) => {
   const company = await Company.find();
-
-  res.send(company);
+  try {
+    res.status(200).send(company);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
-app.post("/updateCompanyBoard", async (req, res) => {
+app.post("/getCompany", async (req, res, next) => {
+  const { c_id } = req.body;
+  try {
+    const company = await Company.findOne({ _id: c_id });
+    if (company) {
+      res.status(200).send(company);
+      next();
+    } else {
+      res.status(204).send({ message: "COMPANY NOT FOUND" });
+      next();
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/updateCompanyBoard", async (req, res, next) => {
   const { c_id, b_id } = req.body;
 
-  const oldBoard = await Company.find({ _id: c_id, c_board: { b_id: b_id } });
+  try {
+    const oldBoard = await Company.findOne({
+      _id: c_id,
+      c_board: { b_id: b_id },
+    });
 
-  if (oldBoard) {
-    res.send({ message: "board has already" });
-  }
+    if (oldBoard) {
+      res.status(200).send({ message: "board has already" });
+      next();
+    }
 
-  if ((b_id, c_id) && !oldBoard) {
-    await Company.updateOne(
-      { _id: c_id },
-      { $push: { c_board: { b_id: b_id } } },
-      {
-        upsert: true,
-        new: true,
+    if ((b_id, c_id) && !oldBoard) {
+      const company = await Company.updateOne(
+        { _id: c_id },
+        { $push: { c_board: { b_id: b_id } } },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+
+      if (company) {
+        res.status(200).send({ message: "updated" });
       }
-    );
 
-    res.send({ message: "updated" });
+      res.status(200).send({ message: "not updated" });
+      next();
+    }
+  } catch (err) {
+    next(err);
   }
 });
 
